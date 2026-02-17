@@ -1,4 +1,4 @@
-import { Meal } from '@types/index'
+import { Meal } from '@/types'
 
 // Datos de dieta - LUNES a DOMINGO (plan de hipertrofia)
 export const DIET_DATA: Record<string, Meal[]> = {

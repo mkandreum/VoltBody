@@ -94,7 +94,7 @@ export const useAppState = () => {
   const saveHistoricalData = useCallback((data: Record<string, any>) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ historicalData: data }))
-      setState(prev => ({ ...prev, historicalData: data }))
+      setState(prev => ({ ...prev, historicalData: data as AppState['historicalData'] }))
     } catch (error) {
       console.error('Error saving data:', error)
     }
