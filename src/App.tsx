@@ -141,7 +141,7 @@ function App() {
         <Header
           onSettingsClick={handleShowSettings}
           onLightningClick={handleLightning}
-          dailyProgress={0}
+          dailyProgress={state.getDailyProgress(state.currentDay)}
         />
 
         {/* Selector de días */}

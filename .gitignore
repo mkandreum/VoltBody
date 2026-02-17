@@ -14,3 +14,9 @@ coverage/
 .git/
 server/dist/
 uploads/
+
+# TypeScript compiled output (source is .ts/.tsx)
+src/**/*.js
+
+# Old monolith backup
+index.html.old

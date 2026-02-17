@@ -1,7 +1,0 @@
-export { DaySelector } from './DaySelector';
-export { DietSection } from './DietSection';
-export { WorkoutSection } from './WorkoutSection';
-export { HistorySection } from './HistorySection';
-export { GoalsSection } from './GoalsSection';
-export { TipsSection } from './TipsSection';
-export { Toast, Modal, Header, Navigation } from './UIComponents';
