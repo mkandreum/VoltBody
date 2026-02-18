@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AppState, BodyMetric, HistoricalWorkout } from '@/types'
 import { DAY_ORDER, THEMES } from '@/constants'
+import { DIET_DATA } from '@/constants/dietData'
 
 const getTodaySpanish = (): string => {
   const days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado']
@@ -25,6 +26,8 @@ export const useAppState = () => {
   })
 
   const [isLoaded, setIsLoaded] = useState(false)
+  // Counter to trigger re-renders when meals are checked/unchecked
+  const [mealCheckVersion, setMealCheckVersion] = useState(0)
 
   // Cargar datos al inicializar
   useEffect(() => {
@@ -94,7 +97,7 @@ export const useAppState = () => {
   const saveHistoricalData = useCallback((data: Record<string, any>) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ historicalData: data }))
-      setState(prev => ({ ...prev, historicalData: data }))
+      setState(prev => ({ ...prev, historicalData: data as AppState['historicalData'] }))
     } catch (error) {
       console.error('Error saving data:', error)
     }
@@ -120,6 +123,7 @@ export const useAppState = () => {
     } else {
       localStorage.removeItem(mealId)
     }
+    setMealCheckVersion(v => v + 1)
   }, [])
 
   // Verificar si comida está completada
@@ -149,6 +153,20 @@ export const useAppState = () => {
     document.body.className = 'theme-blue'
   }, [])
 
+  // Calcular progreso diario basado en comidas completadas
+  const getDailyProgress = useCallback((day: string): number => {
+    const dayMeals = DIET_DATA[day] || []
+    if (dayMeals.length === 0) return 0
+    let checked = 0
+    for (let i = 0; i < dayMeals.length; i++) {
+      if (localStorage.getItem(`${day}-meal-${i}`) === 'true') {
+        checked++
+      }
+    }
+    return Math.round((checked / dayMeals.length) * 100)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mealCheckVersion])
+
   return {
     ...state,
     isLoaded,
@@ -162,6 +180,7 @@ export const useAppState = () => {
     toggleMealCheck,
     isMealChecked,
     deleteAllData,
+    getDailyProgress,
   }
 }
 

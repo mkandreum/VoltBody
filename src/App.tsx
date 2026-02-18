@@ -12,66 +12,64 @@ import {
   Modal,
 } from '@/components'
 import { useAppState, useToast, useModal } from '@/hooks'
+import { EXERCISE_GUIDES } from '@/constants'
 
 function App() {
   const [mounted, setMounted] = useState(false)
   const state = useAppState()
-  const { showToast } = useToast()
-  const { showModal, closeModal } = useModal()
+  const { toast, showToast } = useToast()
+  const { isOpen, content, showModal, closeModal } = useModal()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--theme-primary', state.theme.primary)
-    document.documentElement.style.setProperty('--theme-secondary', state.theme.secondary)
-    document.documentElement.style.setProperty('--theme-accent', state.theme.accent)
+    document.body.className = state.theme
   }, [state.theme])
 
   if (!mounted) return null
 
   const handleSaveProgress = () => {
-    state.saveHistoricalData()
-    showToast('Progreso guardado correctamente ✅', 'success')
+    state.saveHistoricalData(state.historicalData)
+    showToast('Progreso guardado correctamente ✅')
   }
 
   const handleShowExerciseGuide = (exerciseName: string) => {
-    showModal({
-      title: `${exerciseName} - Guía Técnica`,
-      content: `<iframe src="https://giphy.com/embed/${exerciseName}" style="width: 100%; height: 400px; border: none;"></iframe>`,
-    })
+    const gifUrl = EXERCISE_GUIDES[exerciseName] || ''
+    showModal(
+      `<h3>${exerciseName} - Guía Técnica</h3>
+       <img src="${gifUrl}" style="width: 100%; max-height: 400px; object-fit: contain;" alt="${exerciseName}" />`
+    )
   }
 
   const handleShowSettings = () => {
-    showModal({
-      title: 'Ajustes',
-      content: `
-        <div style="color: white;">
-          <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 8px;">Tema Actual: ${state.theme.name}</label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-              <button onclick="window.location.reload()">Guardar</button>
-              <button onclick="document.querySelector('[data-close-modal]').click()">Cerrar</button>
-            </div>
+    showModal(
+      `<div style="color: white;">
+        <h3>Ajustes</h3>
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px;">Tema Actual: ${state.theme}</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button onclick="window.location.reload()">Guardar</button>
+            <button onclick="document.querySelector('[data-close-modal]')?.click()">Cerrar</button>
           </div>
-          <button onclick="
-            const input = document.getElementById('restore-input');
-            if (input) input.click();
-          " style="width: 100%; padding: 8px; margin-bottom: 8px;">Importar Datos</button>
-          <button onclick="
-            const data = JSON.stringify(JSON.parse(localStorage.getItem('appState') || '{}'), null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'voltbody-backup.json';
-            a.click();
-            URL.revokeObjectURL(url);
-          " style="width: 100%; padding: 8px;">Exportar Datos</button>
         </div>
-      `,
-    })
+        <button onclick="
+          const input = document.getElementById('restore-input');
+          if (input) input.click();
+        " style="width: 100%; padding: 8px; margin-bottom: 8px;">Importar Datos</button>
+        <button onclick="
+          const data = JSON.stringify(JSON.parse(localStorage.getItem('appState') || '{}'), null, 2);
+          const blob = new Blob([data], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'voltbody-backup.json';
+          a.click();
+          URL.revokeObjectURL(url);
+        " style="width: 100%; padding: 8px;">Exportar Datos</button>
+      </div>`
+    )
   }
 
   const handleLightning = () => {
@@ -84,7 +82,7 @@ function App() {
         overlay.style.pointerEvents = 'none'
       }, 300)
     }
-    showToast('¡Poder Activado! ⚡', 'success')
+    showToast('¡Poder Activado! ⚡')
   }
 
   const renderSection = () => {
@@ -93,8 +91,8 @@ function App() {
         return (
           <DietSection
             currentDay={state.currentDay}
-            checkedMeals={state.checkedMeals}
-            onMealCheck={(mealId: string) => state.toggleMealCheck(mealId)}
+            onMealCheck={(mealId: string, checked: boolean) => state.toggleMealCheck(mealId, checked)}
+            isMealChecked={(mealId: string) => state.isMealChecked(mealId)}
           />
         )
       case 'workout':
@@ -102,18 +100,25 @@ function App() {
           <WorkoutSection
             currentDay={state.currentDay}
             workoutInputs={state.workoutInputs}
-            onUpdateExercise={(exerciseId: string, field: string, value: string | number) =>
-              state.updateWorkoutInput(exerciseId, field, value)
+            onInputChange={(key: string, field: 'weight' | 'rpe', value: string) =>
+              state.updateWorkoutInput(key, field, value)
             }
-            onSave={handleSaveProgress}
+            onSaveProgress={handleSaveProgress}
+            onShowExerciseGuide={handleShowExerciseGuide}
           />
         )
       case 'history':
-        return <HistorySection />
+        return (
+          <HistorySection
+            historySelectedDay={state.historySelectedDay}
+            onDayChange={(day: string) => state.setHistorySelectedDay(day)}
+            historicalData={state.historicalData}
+          />
+        )
       case 'goals':
         return <GoalsSection />
       case 'tips':
-        return <TipsSection />
+        return <TipsSection onShowModal={showModal} />
       default:
         return null
     }
@@ -136,6 +141,7 @@ function App() {
         <Header
           onSettingsClick={handleShowSettings}
           onLightningClick={handleLightning}
+          dailyProgress={state.getDailyProgress(state.currentDay)}
         />
 
         {/* Selector de días */}
@@ -163,8 +169,8 @@ function App() {
       />
 
       {/* Toast y Modal */}
-      <Toast />
-      <Modal onClose={closeModal} />
+      <Toast message={toast} />
+      <Modal isOpen={isOpen} content={content} onClose={closeModal} />
 
       {/* Inputs ocultos */}
       <input type="file" id="restore-input" accept=".json" style={{ display: 'none' }} />

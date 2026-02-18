@@ -1,6 +1,7 @@
 import React from 'react'
 import { WORKOUT_DATA } from '@/constants/workoutData'
 import { DAY_NAMES } from '@/constants'
+import { Exercise } from '@/types'
 
 interface WorkoutSectionProps {
   currentDay: string
@@ -38,8 +39,8 @@ export const WorkoutSection: React.FC<WorkoutSectionProps> = ({
 
       <div className="exercises">
         {workout.exercises
-          .filter(ex => ex.sets)
-          .map((exercise, index) => {
+          .filter((ex: Exercise) => ex.sets)
+          .map((exercise: Exercise, index: number) => {
             const inputKey = `${currentDay}_${exercise.name}`
             const input = workoutInputs[inputKey] || { weight: '', rpe: '' }
 

@@ -1,4 +1,4 @@
-import { WorkoutDay } from '@types/index'
+import { WorkoutDay } from '@/types'
 
 export const WORKOUT_DATA: Record<string, WorkoutDay> = {
   lunes: {
