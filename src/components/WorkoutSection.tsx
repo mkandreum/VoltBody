@@ -6,6 +6,8 @@ import { Exercise } from '@/types'
 interface WorkoutSectionProps {
   currentDay: string
   workoutInputs: Record<string, { weight: string; rpe: string }>
+  customExercises?: Exercise[]
+  specialClass?: string
   onInputChange: (key: string, field: 'weight' | 'rpe', value: string) => void
   onSaveProgress: () => void
   onShowExerciseGuide: (exerciseName: string) => void
@@ -14,12 +16,15 @@ interface WorkoutSectionProps {
 export const WorkoutSection: React.FC<WorkoutSectionProps> = ({
   currentDay,
   workoutInputs,
+  customExercises,
+  specialClass,
   onInputChange,
   onSaveProgress,
   onShowExerciseGuide,
 }) => {
   const workout = WORKOUT_DATA[currentDay]
   if (!workout) return null
+  const exercisesToShow = customExercises && customExercises.length > 0 ? customExercises : workout.exercises
 
   const calculate1RM = (weight: string, reps: string): string => {
     const w = parseFloat(weight)
@@ -37,8 +42,14 @@ export const WorkoutSection: React.FC<WorkoutSectionProps> = ({
         <div className="workout-time">{workout.duration}</div>
       </div>
 
+      {specialClass && currentDay === 'jueves' && (
+        <div className="rec-item" style={{ marginBottom: '16px', borderLeftColor: 'var(--neon-yellow)' }}>
+          <strong>Clase Especial:</strong> {specialClass.split('_').join(' ')}
+        </div>
+      )}
+
       <div className="exercises">
-        {workout.exercises
+        {exercisesToShow
           .filter((ex: Exercise) => ex.sets)
           .map((exercise: Exercise, index: number) => {
             const inputKey = `${currentDay}_${exercise.name}`

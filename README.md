@@ -1,186 +1,137 @@
-# VoltBody - Fitness App
+# VoltBody
 
-Plan de Hipertrofia Personalizado con seguimiento de progreso, dieta y entrenamientos.
+App fitness mobile-first con login real, plan de dieta y entreno personalizable, seguimiento de progreso y sincronizacion cloud basica.
 
-## Fases de Desarrollo
+## Funcionalidades actuales
 
-### ✅ Fase 1: Scaffold Base (EN PROGRESO)
-- Crear proyecto Vite + React + TypeScript
-- Migrar todo el CSS sin cambios visuales
-- Portar HTML a componente React App
-- Estructura de carpetas y configuración
+- Login y registro real en la app.
+- Sesion persistente de usuario.
+- Temas: Aguamarina-Negro, Verde-Negro y Ocaso-Negro.
+- Perfil configurable: objetivo, actividad, pasos, lugar de entreno, hora, dias, prioridades y patologias.
+- Dieta diaria con resumen, almuerzo automatico y plato especial personalizado.
+- Entreno configurable con catalogo amplio de ejercicios por grupo muscular.
+- Clase especial semanal configurable.
+- Historial de progreso por dia.
+- Motivacion con frase y foto.
+- Comunidad simple tipo muro.
+- Sincronizacion cloud manual y carga automatica al arrancar si existe sesion.
+- Backend Express que sirve API y frontend compilado en una sola app.
 
-**Estado:** Creando estructura base...
-
-### 📋 Fase 2: Portar Lógica UI a React
-- Convertir JavaScript vanillla a hooks de React
-- Componentes: Diet, Workout, History, Goals, Tips
-- Sistema de tabs y day selector
-- Integración de Chart.js en React
-
-### 🔧 Fase 3: Backend + Prisma + JWT Auth
-- API REST con Express
-- Esquema Prisma (Users, Workouts, BodyMetrics, MealChecks, etc.)
-- Autenticación JWT (registro + login)
-- CRUD endpoints
-
-### 📸 Fase 4: Archivos y Fotos
-- Upload de fotos a disco (/uploads)
-- Almacenar URL en BD
-- Servir archivos estáticos desde backend
-
-### 🐳 Fase 5: Docker + Coolify Deploy
-- Dockerfile multi-stage (frontend + backend)
-- docker-compose con PostgreSQL
-- Ejecutar migrations al startup
-- Variables de entorno y volúmenes
-
-## Stack Tecnológico
+## Stack
 
 ### Frontend
 - React 18
 - Vite
 - TypeScript
-- Chart.js (gráficas)
-- Axios (HTTP client)
+- Axios
 
 ### Backend
-- Express.js
-- Prisma (ORM)
+- Express
 - TypeScript
-- JWT (autenticación)
-- Multer (uploads)
-- PostgreSQL
+- Persistencia JSON local en `server/data/store.json`
+- Archivos de imagen en `uploads/`
 
-### DevOps
-- Docker
-- Docker Compose
-- Coolify (deployment)
+## Instalacion
 
-## Setup Local
-
-### Requisitos
-- Node.js >= 18
-- PostgreSQL >= 13
-
-### Instalación
-
-1. Instalar dependencias:
 ```bash
 npm install
-npm install --save-dev tsx
 ```
 
-2. Configurar variables de entorno:
-```bash
-cp .env.example .env
-# Editar .env con tus credenciales de BD
-```
+## Desarrollo
 
-3. Crear BD y ejecutar migrations:
-```bash
-npm run db:push
-npm run db:migrate
-```
+Frontend:
 
-4. Generar cliente Prisma:
-```bash
-npm run db:generate
-```
-
-### Desarrollo
-
-En dos terminales:
-
-**Terminal 1 - Frontend:**
 ```bash
 npm run dev
 ```
-Accede a http://localhost:5173
 
-**Terminal 2 - Backend:**
+Backend:
+
 ```bash
 npm run server:dev
 ```
-El backend estará en http://localhost:3000
 
-## Estructura de Carpetas
+## Build local
 
-```
-VoltBody/
-├── public/                 # Assets estáticos
-├── src/
-│   ├── components/        # Componentes React
-│   ├── hooks/             # Custom hooks
-│   ├── types/             # Tipos TypeScript
-│   ├── utils/             # Utilidades
-│   ├── api/               # Cliente de API
-│   ├── constants/         # Datos constantes
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── index.css          # Estilos globales
-├── server/
-│   ├── routes/            # Rutas Express
-│   ├── middleware/        # Middleware
-│   ├── controllers/       # Lógica de negocio
-│   ├── prisma/            # Schema y migrations
-│   ├── uploads/           # Archivos subidos
-│   └── index.ts
-├── package.json
-├── vite.config.ts
-├── tsconfig.json
-├── docker-compose.yml
-├── Dockerfile
-└── .env.example
+```bash
+npm run build:all
 ```
 
-## Base de Datos
+## Docker
 
-### Modelos Principales (Prisma)
-- **User**: Información de usuario + autenticación
-- **HistoricalWorkout**: Historial de entrenamientos
-- **BodyMetrics**: Medidas corporales
-- **ProgressPhoto**: Fotos de progreso
-- **MealCheck**: Comidas marcadas como completadas
-- **UserSettings**: Tema, preferencias
+Archivos incluidos:
 
-## API Endpoints (Fase 3)
+- `Dockerfile`
+- `docker-compose.yml`
+- `.dockerignore`
+
+Levantar local con Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+La app quedara disponible en:
+
+- `http://localhost:3000`
+
+Persistencia incluida por volumen para:
+
+- `server/data`
+- `uploads`
+
+## Coolify
+
+Configuracion recomendada en Coolify:
+
+1. Tipo de despliegue: `Dockerfile`
+2. Puerto expuesto: `3000`
+3. Variable opcional: `PORT=3000`
+4. Volumen persistente para `/app/server/data`
+5. Volumen persistente para `/app/uploads`
+
+No necesitas separar frontend y backend en servicios distintos porque Express sirve tambien el build de Vite.
+
+## Variables de entorno
+
+Ver `.env.example`.
+
+- `VITE_API_URL=` vacio para mismo origen
+- `NODE_ENV=production`
+- `PORT=3000`
+
+## Endpoints principales
 
 ### Auth
-- `POST /auth/register` - Crear usuario
-- `POST /auth/login` - Login con JWT
-- `POST /auth/refresh` - Refrescar token
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/refresh`
 
-### Workouts
-- `GET /workouts/:day` - Obtener entrenamientos del día
-- `POST /workouts/:day/:exercise` - Guardar progreso ejercicio
+### Estado y perfil
+- `GET /api/settings`
+- `PUT /api/settings`
+- `GET /api/profile`
+- `PUT /api/profile`
+- `GET /api/app-state`
+- `PUT /api/app-state`
 
-### Body Metrics
-- `GET /metrics` - Historial de medidas
-- `POST /metrics` - Guardar nueva medida
-- `POST /metrics/photo` - Subir foto
+### Progreso
+- `GET /api/metrics`
+- `POST /api/metrics`
+- `POST /api/metrics/photo`
+- `GET /api/workouts/:day`
+- `POST /api/workouts/:day/:exercise`
 
-### Settings
-- `GET /settings` - Obtener preferencias
-- `PUT /settings` - Actualizar preferencias
+### Comunidad
+- `GET /api/community/messages`
+- `POST /api/community/messages`
+- `DELETE /api/community/messages`
 
-## Decisiones de Diseño
+## Notas
 
-✅ **PostgreSQL**: BD robusta y escalable  
-✅ **Prisma**: Type-safe ORM, fácil de mantener  
-✅ **JWT**: Stateless, ideal para APIs  
-✅ **Fotos en disco**: Performance vs Base64  
-✅ **Docker Compose**: Deploy sencillo en Coolify  
-✅ **React + TypeScript**: Type-safety y escalabilidad  
+- La persistencia actual del backend es local JSON. Para multiusuario serio a mayor escala, el siguiente salto natural es PostgreSQL/Prisma.
+- La autenticacion actual es funcional, pero ligera. Si quieres endurecer seguridad, el siguiente paso es hash de password y expiracion real de sesiones.
 
-## Próximos Pasos
+## Ultima actualizacion
 
-1. Instalar dependencias: `npm install`
-2. Continuar con **Fase 2**: Componentes React
-3. Implementar hooks para estado global
-4. Crear componentes por sección (Diet, Workout, etc.)
-
----
-
-**Mantenedor**: VoltBody Team  
-**Última actualización**: Feb 2025
+Marzo 2026

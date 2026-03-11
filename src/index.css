@@ -19,58 +19,31 @@
 }
 
 /* --- TEMAS --- */
-body.theme-blue {
+body.theme-aquamarine {
+    --neon-green: #7FFFD4;
+    --neon-yellow: #C3F73A;
+    --neon-pink: #4DEEEA;
+    --neon-blue: #00E5FF;
+    --neon-red: #FF5F5F;
+    --border-color: rgba(0, 229, 255, 0.25);
+}
+
+body.theme-greenblack {
     --neon-green: #39FF14;
-    --neon-yellow: #E8FF00;
-    --neon-pink: #FF00FF;
-    --neon-blue: #00F2FF;
-    --neon-red: #FF073A;
-    --border-color: rgba(0, 242, 255, 0.25);
+    --neon-yellow: #D9FF57;
+    --neon-pink: #7CFF7A;
+    --neon-blue: #5EFFA4;
+    --neon-red: #FF4D6D;
+    --border-color: rgba(57, 255, 20, 0.32);
 }
 
-body.theme-green {
-    --neon-green: #39FF14;
-    --neon-yellow: #ADFF2F;
-    --neon-pink: #ABFF4F;
-    --neon-blue: #39FF14;
-    --neon-red: #FF3131;
-    --border-color: rgba(57, 255, 20, 0.3);
-}
-
-body.theme-pink {
-    --neon-green: #F0F;
-    --neon-yellow: #FF1493;
-    --neon-pink: #FF00FF;
-    --neon-blue: #FF69B4;
-    --neon-red: #FF073A;
-    --border-color: rgba(255, 0, 255, 0.25);
-}
-
-body.theme-yellow {
-    --neon-green: #E8FF00;
-    --neon-yellow: #FFD700;
-    --neon-pink: #FFA500;
-    --neon-blue: #F0E68C;
-    --neon-red: #FF4500;
-    --border-color: rgba(232, 255, 0, 0.25);
-}
-
-body.theme-red {
-    --neon-green: #FFA500;
-    --neon-yellow: #FF4500;
-    --neon-pink: #FF073A;
-    --neon-blue: #FF6347;
-    --neon-red: #FF073A;
-    --border-color: rgba(255, 7, 58, 0.3);
-}
-
-body.theme-purple {
-    --neon-green: #39FF14;
-    --neon-yellow: #F0F;
-    --neon-pink: #9D00FF;
-    --neon-blue: #00BFFF;
-    --neon-red: #FF007F;
-    --border-color: rgba(157, 0, 255, 0.25);
+body.theme-sunset {
+    --neon-green: #FFB347;
+    --neon-yellow: #FFC971;
+    --neon-pink: #FF6B6B;
+    --neon-blue: #FF914D;
+    --neon-red: #FF4F4F;
+    --border-color: rgba(255, 145, 77, 0.3);
 }
 
 /* --- ANIMACIONES --- */
@@ -199,6 +172,75 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+.auth-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+}
+
+.auth-card {
+    width: min(100%, 420px);
+    padding: 28px;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-kicker {
+    color: var(--neon-blue);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.auth-card h1 {
+    font-size: clamp(2rem, 8vw, 2.8rem);
+    color: var(--neon-yellow);
+    margin-bottom: 12px;
+}
+
+.auth-copy {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.auth-form {
+    display: grid;
+    gap: 12px;
+}
+
+.auth-submit {
+    margin-top: 8px;
+}
+
+.auth-toggle {
+    width: 100%;
+    margin-top: 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 700;
+    padding: 10px 0 0;
+}
+
+.user-pill {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 8px 12px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
 /* --- LAYOUT Y FONDOS --- */
 .liquid-container {
     width: 100vw;
@@ -323,7 +365,7 @@ body::after {
 }
 
 .header h1 {
-    font-size: 3rem;
+    font-size: clamp(2rem, 9vw, 3rem);
     font-weight: 800;
     letter-spacing: -1.5px;
     margin-bottom: 10px;
@@ -413,6 +455,8 @@ body::after {
 
 .nav-tab {
     flex: 1;
+    border: none;
+    background: transparent;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -487,6 +531,11 @@ body::after {
     transform: translateY(-2px);
 }
 
+.day-btn:disabled {
+    cursor: not-allowed;
+    transform: none;
+}
+
 .day-btn.active {
     color: #0A0A10;
     transform: translateY(-3px) scale(1.05);
@@ -499,7 +548,7 @@ body::after {
 }
 
 .content-section {
-    display: none;
+    display: block;
     animation: fadeIn .6s ease forwards
 }
 
@@ -916,6 +965,8 @@ body::after {
 .modal-content {
     width: calc(100% - 40px);
     max-width: 480px;
+    max-height: min(80vh, 680px);
+    overflow-y: auto;
     padding: 25px;
     text-align: center
 }
@@ -1161,6 +1212,30 @@ body::after {
     margin-bottom: 20px;
 }
 
+.chip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.chip-btn {
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.chip-btn.active {
+    color: var(--text-primary);
+    border-color: var(--neon-yellow);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--neon-yellow) 40%, transparent);
+}
+
 .metrics-form input[type="number"],
 .metrics-form input[type="file"] {
     width: 100%;
@@ -1213,6 +1288,96 @@ body::after {
     z-index: 9999;
     overflow: hidden;
     pointer-events: none;
+}
+
+@media (max-width: 520px) {
+    .auth-shell {
+        padding: 16px;
+    }
+
+    .auth-card {
+        padding: 22px 18px;
+    }
+
+    .container {
+        padding: 14px 12px 128px;
+    }
+
+    .header {
+        padding: 18px 14px;
+    }
+
+    .header-icon {
+        font-size: 1.7rem;
+    }
+
+    .header p {
+        font-size: 0.95rem;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .meal-time {
+        font-size: 1.05rem;
+    }
+
+    .exercise-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .weight-rpe-group {
+        width: 100%;
+    }
+
+    .weight-input,
+    .rpe-select {
+        width: 100%;
+    }
+
+    .metrics-form {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-tabs.glass {
+        height: 64px;
+        width: calc(100% - 16px);
+        padding: 0 4px;
+    }
+
+    .nav-indicator {
+        height: 64px;
+        top: 0;
+        border-radius: 30px;
+    }
+
+    .nav-tab {
+        font-size: 0.65rem;
+        gap: 2px;
+    }
+
+    .nav-tab .icon {
+        font-size: 1.25rem;
+    }
+
+    .toast {
+        width: calc(100% - 20px);
+        bottom: 90px;
+        font-size: 0.95rem;
+        padding: 12px 14px;
+    }
 }
 
 .lightning {

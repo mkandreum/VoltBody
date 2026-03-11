@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  voltbody:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: voltbody-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    volumes:
+      - voltbody-data:/app/server/data
+      - voltbody-uploads:/app/uploads
+
+volumes:
+  voltbody-data:
+  voltbody-uploads:

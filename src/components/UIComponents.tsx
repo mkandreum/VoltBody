@@ -14,18 +14,14 @@ export const Toast: React.FC<ToastProps> = ({ message }) => {
 
 interface ModalProps {
   isOpen: boolean
-  content: string
+  content: React.ReactNode
   onClose: () => void
 }
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, content, onClose }) => {
   return (
     <div id="modal" className={`modal ${isOpen ? 'show' : ''}`} onClick={e => e.target === e.currentTarget && onClose()}>
-      <div
-        id="modal-content"
-        className="glass modal-content"
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
+      <div id="modal-content" className="glass modal-content">{content}</div>
     </div>
   )
 }
@@ -75,19 +71,26 @@ export const Navigation: React.FC<NavigationProps> = ({ currentTab, onTabChange 
     { id: 'tips', icon: '💡', label: 'Tips' },
   ]
 
+  const activeIndex = tabs.findIndex(tab => tab.id === currentTab)
+  const indicatorStyle = {
+    width: `${100 / tabs.length}%`,
+    transform: `translateX(${activeIndex * 100}%)`,
+  }
+
   return (
     <div className="tab-bar-container">
       <nav className="nav-tabs glass">
-        <div className="nav-indicator"></div>
+        <div className="nav-indicator" style={indicatorStyle}></div>
         {tabs.map(tab => (
-          <div
+          <button
             key={tab.id}
             className={`nav-tab ${tab.id === currentTab ? 'active' : ''}`}
             onClick={() => onTabChange(tab.id)}
+            type="button"
           >
             <span className="icon">{tab.icon}</span>
             <span>{tab.label}</span>
-          </div>
+          </button>
         ))}
       </nav>
     </div>

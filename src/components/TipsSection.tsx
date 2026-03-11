@@ -1,132 +1,191 @@
-import React from 'react'
-import { TIPS_CATEGORIES, DAILY_TIPS } from '@/constants'
+import React, { useMemo, useState } from 'react'
+import { DAILY_TIPS, MOTIVATIONAL_PHRASES } from '@/constants'
+import { CommunityMessage, UserProfile, WorkoutCatalogSelection } from '@/types'
 
 interface TipsSectionProps {
-  onShowModal: (content: string) => void
+  profile: UserProfile
+  motivationPhrase: string
+  motivationPhoto: string
+  communityMessages: CommunityMessage[]
+  selectedExercises: WorkoutCatalogSelection
+  onSetMotivation: (phrase: string, photo: string) => void
+  onAddCommunityMessage: (author: string, text: string) => void
+  onClearCommunityMessages: () => void
 }
 
-export const TipsSection: React.FC<TipsSectionProps> = ({ onShowModal }) => {
-  const getTodayTip = () => {
-    const startDate = new Date('2024-01-01')
-    const today = new Date()
-    const dayOfYear = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-    const tipIndex = dayOfYear % DAILY_TIPS.length
-    return DAILY_TIPS[tipIndex]
+const generateAiPlan = (
+  profile: UserProfile,
+  selectedExercises: WorkoutCatalogSelection
+): string[] => {
+  const groups = profile.priorities.length > 0 ? profile.priorities : ['pierna', 'espalda']
+  const lines: string[] = []
+
+  lines.push(`Objetivo: ${profile.fitnessGoal.replace('_', ' ')}`)
+  lines.push(`Lugar: ${profile.trainingPlace} | Hora sugerida: ${profile.trainTime}`)
+  lines.push(`Pasos diarios objetivo: ${Math.max(profile.dailySteps, 6000)}`)
+
+  groups.forEach(group => {
+    const list = selectedExercises[group as keyof WorkoutCatalogSelection] || []
+    const picks = list.slice(0, 3)
+    if (picks.length > 0) {
+      lines.push(`${group.toUpperCase()}: ${picks.join(', ')}`)
+    }
+  })
+
+  if (profile.injuryPathologies) {
+    lines.push(`Ajuste por lesion: evitar dolor en ${profile.injuryPathologies}.`) 
   }
 
-  const todayTip = getTodayTip()
-
-  const calculateCalories = () => {
-    const gender = (document.getElementById('gender') as HTMLSelectElement)?.value
-    const age = parseFloat((document.getElementById('age') as HTMLInputElement)?.value)
-    const weight = parseFloat((document.getElementById('weight-cal') as HTMLInputElement)?.value)
-    const height = parseFloat((document.getElementById('height') as HTMLInputElement)?.value)
-    const activity = parseFloat((document.getElementById('activity') as HTMLSelectElement)?.value)
-
-    if (!age || !weight || !height) return
-
-    let bmr: number
-    if (gender === 'male') {
-      bmr = 10 * weight + 6.25 * height - 5 * age + 5
-    } else {
-      bmr = 10 * weight + 6.25 * height - 5 * age - 161
-    }
-
-    const maintenance = Math.round(bmr * activity)
-    const deficit = maintenance - 400
-    const surplus = maintenance + 400
-
-    const resultDiv = document.getElementById('calorie-result')
-    if (resultDiv) {
-      resultDiv.innerHTML = `
-        <p>Mantenimiento: ~${maintenance} kcal/día</p>
-        <p style="color: var(--neon-red);">Déficit (perder): ~${deficit} kcal/día</p>
-        <p style="color: var(--neon-green);">Superávit (ganar): ~${surplus} kcal/día</p>
-      `
-    }
+  if (profile.foodPathologies) {
+    lines.push(`Ajuste nutricional por patologias: ${profile.foodPathologies}.`)
   }
 
-  const calculateTool1RM = () => {
-    const weight = parseFloat((document.getElementById('rm-weight') as HTMLInputElement)?.value)
-    const reps = parseFloat((document.getElementById('rm-reps') as HTMLInputElement)?.value)
+  lines.push('Sesion sugerida: 5 min movilidad, bloque principal 40 min, core 10 min, vuelta a calma 5 min.')
+  return lines
+}
 
-    if (!weight || !reps) return
+export const TipsSection: React.FC<TipsSectionProps> = ({
+  profile,
+  motivationPhrase,
+  motivationPhoto,
+  communityMessages,
+  selectedExercises,
+  onSetMotivation,
+  onAddCommunityMessage,
+  onClearCommunityMessages,
+}) => {
+  const [author, setAuthor] = useState('')
+  const [message, setMessage] = useState('')
+  const [localPhrase, setLocalPhrase] = useState(motivationPhrase)
+  const [localPhoto, setLocalPhoto] = useState(motivationPhoto)
 
-    const resultDiv = document.getElementById('rm-result')
-    if (resultDiv) {
-      if (reps === 1) {
-        resultDiv.textContent = `Tu 1RM es: ${weight.toFixed(1)} kg`
-      } else {
-        const oneRepMax = weight * (1 + reps / 30)
-        resultDiv.textContent = `Tu 1RM estimado es: ${oneRepMax.toFixed(1)} kg`
-      }
+  const startDate = new Date('2024-01-01')
+  const today = new Date()
+  const dayOfYear = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+  const todayTip = DAILY_TIPS[dayOfYear % DAILY_TIPS.length]
+
+  const aiPlan = useMemo(
+    () => generateAiPlan(profile, selectedExercises),
+    [profile, selectedExercises]
+  )
+
+  const randomPhrase = () => {
+    const phrase = MOTIVATIONAL_PHRASES[Math.floor(Math.random() * MOTIVATIONAL_PHRASES.length)]
+    setLocalPhrase(phrase)
+  }
+
+  const saveMotivation = () => {
+    onSetMotivation(localPhrase, localPhoto)
+  }
+
+  const onPhotoFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : ''
+      setLocalPhoto(result)
     }
+    reader.readAsDataURL(file)
+  }
+
+  const publishMessage = () => {
+    onAddCommunityMessage(author, message)
+    setMessage('')
   }
 
   return (
     <div>
-      <h2 className="rec-title">Biblioteca de Consejos y Herramientas</h2>
+      <h2 className="rec-title">Motivacion, IA y Comunidad</h2>
 
       <div id="tip-of-the-day-container" className="glass">
-        <h3>🌟 Tip del Día 🌟</h3>
+        <h3>Tip del dia</h3>
         <p>
           <strong>{todayTip.title}:</strong> {todayTip.content}
         </p>
       </div>
 
-      {Object.entries(TIPS_CATEGORIES).map(([category, items]) => (
-        <details key={category} className="tip-category">
-          <summary>{category}</summary>
-          {items.map((item, idx) => (
-            <div key={idx} className="rec-item">
-              <strong>{item.title}</strong>
-              <p>{item.content}</p>
+      <div className="glass card">
+        <h3>Motivacion con frase y foto</h3>
+        <textarea
+          className="tool-input"
+          value={localPhrase}
+          onChange={e => setLocalPhrase(e.target.value)}
+          placeholder="Escribe tu frase"
+        />
+        <div className="confirmation-buttons" style={{ marginTop: '10px' }}>
+          <button className="tool-btn btn-shine" type="button" onClick={randomPhrase}>
+            Frase aleatoria
+          </button>
+          <button className="tool-btn btn-shine" type="button" onClick={saveMotivation}>
+            Guardar motivacion
+          </button>
+        </div>
+        <input
+          type="file"
+          className="tool-input"
+          accept="image/*"
+          onChange={onPhotoFile}
+          style={{ marginTop: '10px' }}
+        />
+        {localPhoto && (
+          <div className="photo-gallery" style={{ gridTemplateColumns: '1fr', marginTop: '14px' }}>
+            <img src={localPhoto} alt="Motivacion" />
+          </div>
+        )}
+      </div>
+
+      <div className="glass card">
+        <h3>Generador IA realista (reglas de perfil)</h3>
+        {aiPlan.map((line, index) => (
+          <p key={index} style={{ marginBottom: '8px', color: 'var(--text-secondary)' }}>
+            {line}
+          </p>
+        ))}
+      </div>
+
+      <div className="glass card">
+        <h3>Comunicacion entre usuarios</h3>
+        <div className="metrics-form">
+          <input
+            type="text"
+            className="tool-input"
+            placeholder="Tu nombre"
+            value={author}
+            onChange={e => setAuthor(e.target.value)}
+          />
+          <input
+            type="text"
+            className="tool-input"
+            placeholder="Escribe un mensaje"
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+          />
+        </div>
+        <div className="confirmation-buttons">
+          <button type="button" className="tool-btn btn-shine" onClick={publishMessage}>
+            Publicar
+          </button>
+          <button type="button" className="tool-btn delete-btn btn-shine" onClick={onClearCommunityMessages}>
+            Limpiar muro
+          </button>
+        </div>
+
+        <div className="history-table-container" style={{ marginTop: '14px' }}>
+          {communityMessages.length === 0 && (
+            <p style={{ color: 'var(--text-secondary)' }}>Aun no hay mensajes en el muro.</p>
+          )}
+          {communityMessages.map(item => (
+            <div key={item.id} className="rec-item" style={{ marginLeft: 0 }}>
+              <strong>{item.author}</strong>
+              <p>{item.text}</p>
+              <small style={{ color: 'var(--text-secondary)' }}>
+                {new Date(item.createdAt).toLocaleString()}
+              </small>
             </div>
           ))}
-        </details>
-      ))}
-
-      {/* Calculadora de Calorías */}
-      <details className="tip-category">
-        <summary>🧮 Calculadoras</summary>
-        <div className="tip-tool">
-          <strong>Calculadora de Calorías</strong>
-          <div className="tool-input-group">
-            <select id="gender" className="tool-select">
-              <option value="male">Hombre</option>
-              <option value="female">Mujer</option>
-            </select>
-            <input type="number" id="age" placeholder="Edad" className="tool-input" />
-            <input type="number" id="weight-cal" placeholder="Peso (kg)" className="tool-input" />
-            <input type="number" id="height" placeholder="Altura (cm)" className="tool-input" />
-            <select id="activity" className="tool-select" style={{ gridColumn: '1 / -1' }}>
-              <option value="1.2">Sedentario (poco o nada de ejercicio)</option>
-              <option value="1.375">Ligero (1-3 días/semana)</option>
-              <option value="1.55" defaultChecked>
-                Moderado (3-5 días/semana)
-              </option>
-              <option value="1.725">Activo (6-7 días/semana)</option>
-              <option value="1.9">Muy activo (trabajo físico + entreno)</option>
-            </select>
-          </div>
-          <button className="tool-btn btn-shine" onClick={calculateCalories}>
-            Calcular
-          </button>
-          <div id="calorie-result" className="tool-result"></div>
         </div>
-
-        <div className="tip-tool">
-          <strong>Calculadora de 1RM (1 Rep Máx.)</strong>
-          <div className="tool-input-group">
-            <input type="number" id="rm-weight" placeholder="Peso (kg)" className="tool-input" />
-            <input type="number" id="rm-reps" placeholder="Repeticiones" className="tool-input" />
-          </div>
-          <button className="tool-btn btn-shine" onClick={calculateTool1RM}>
-            Calcular
-          </button>
-          <div id="rm-result" className="tool-result"></div>
-        </div>
-      </details>
+      </div>
     </div>
   )
 }

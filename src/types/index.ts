@@ -55,13 +55,68 @@ export interface UserSettings {
   language: string
 }
 
+export type ActivityLevel = 'sedentario' | 'ligero' | 'moderado' | 'activo' | 'muy_activo'
+export type TrainingPlace = 'casa' | 'gym' | 'calle'
+export type FitnessGoal = 'perder_grasa' | 'ganar_musculo' | 'recomposicion'
+
+export interface UserProfile {
+  fitnessGoal: FitnessGoal
+  activityLevel: ActivityLevel
+  dailySteps: number
+  trainingPlace: TrainingPlace
+  trainTime: string
+  trainDays: string[]
+  priorities: string[]
+  foodPathologies: string
+  injuryPathologies: string
+  specialClass: string
+  targetKg: number
+  targetMonths: number
+}
+
+export interface SpecialDish {
+  name: string
+  calories: number
+  proteins: number
+  carbs: number
+  fats: number
+  prep: string
+}
+
+export interface WorkoutCatalogSelection {
+  pecho: string[]
+  espalda: string[]
+  hombro: string[]
+  pierna: string[]
+  biceps: string[]
+  triceps: string[]
+  gluteo: string[]
+  core: string[]
+}
+
+export interface CommunityMessage {
+  id: string
+  author: string
+  text: string
+  createdAt: string
+}
+
 export interface AppState {
   currentDay: string
   currentTab: string
   historySelectedDay: string
   theme: string
   workoutInputs: Record<string, { weight: string; rpe: string }>
-  historicalData: Record<string, HistoricalWorkout[]> & { bodyMetrics: BodyMetric[] }
+  historicalData: {
+    bodyMetrics: BodyMetric[]
+    byDay: Record<string, HistoricalWorkout[]>
+  }
+  profile: UserProfile
+  specialDish: SpecialDish | null
+  selectedExercises: WorkoutCatalogSelection
+  motivationPhoto: string
+  motivationPhrase: string
+  communityMessages: CommunityMessage[]
 }
 
 export interface AuthResponse {

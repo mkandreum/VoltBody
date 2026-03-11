@@ -1,4 +1,5 @@
 export { DaySelector } from './DaySelector'
+export { AuthScreen } from './AuthScreen'
 export { DietSection } from './DietSection'
 export { WorkoutSection } from './WorkoutSection'
 export { HistorySection } from './HistorySection'

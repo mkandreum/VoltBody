@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:app": "vite build",
+    "build:all": "npm run build:app && npm run server:build",
     "preview": "vite preview",
     "server": "node server/dist/index.js",
+    "start": "node server/dist/index.js",
     "server:dev": "tsx watch server/index.ts",
     "server:build": "tsc -p server/tsconfig.json",
     "db:migrate": "prisma migrate dev",
@@ -16,6 +19,12 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "chart.js": "^4.4.1",
@@ -32,19 +41,13 @@
     "eslint": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "express": "^4.18.0",
     "@types/express": "^4.17.0",
     "prisma": "^5.7.0",
     "@prisma/client": "^5.7.0",
     "tsx": "^4.7.0",
-    "bcryptjs": "^2.4.3",
     "@types/bcryptjs": "^2.4.2",
-    "jsonwebtoken": "^9.0.2",
     "@types/jsonwebtoken": "^9.0.5",
-    "dotenv": "^16.3.1",
-    "multer": "^1.4.5-lts.1",
     "@types/multer": "^1.4.11",
-    "cors": "^2.8.5",
     "@types/cors": "^2.8.17"
   }
 }

@@ -19,12 +19,71 @@ export const MACRO_NAMES: Record<string, string> = {
 }
 
 export const THEMES: Record<string, string> = {
-  'theme-blue': 'Cyber Blue 💧',
-  'theme-green': 'Toxic Green 🍀',
-  'theme-pink': 'Hot Pink 🔥',
-  'theme-yellow': 'Electric Yellow ⚡️',
-  'theme-red': 'Cyber Red 🌶️',
-  'theme-purple': 'Galactic Purple 🔮',
+  'theme-aquamarine': 'Aguamarina - Negro',
+  'theme-greenblack': 'Verde - Negro',
+  'theme-sunset': 'Ocaso - Negro',
+}
+
+export const MOTIVATIONAL_PHRASES = [
+  'Disciplina hoy, orgullo manana.',
+  'Entrena aunque no tengas ganas: ahi esta el cambio.',
+  'Tu cuerpo escucha todo lo que hace tu mente.',
+  'Paso a paso tambien se gana.',
+  'Hazlo simple, hazlo constante, hazlo siempre.',
+]
+
+export const SPECIAL_CLASSES = [
+  'zumba_instructor_jean',
+  'trote_guiado',
+  'movilidad_profunda',
+  'intervalos_hiit',
+]
+
+export const EXERCISE_CATALOG: Record<string, string[]> = {
+  pecho: [
+    'Press banca', 'Press inclinado mancuernas', 'Press declinado', 'Fondos en paralelas', 'Aperturas en polea',
+    'Aperturas con mancuernas', 'Press en maquina convergente', 'Pullover en polea', 'Flexiones clasicas',
+    'Flexiones con pausa', 'Press con agarre cerrado', 'Aperturas en banco inclinado', 'Press con banda',
+    'Press unilateral', 'Svend press', 'Push up deficit',
+  ],
+  espalda: [
+    'Dominadas pronas', 'Jalon al pecho', 'Remo con barra', 'Remo mancuerna a una mano', 'Remo en T',
+    'Remo en polea baja', 'Pulldown brazos rectos', 'Face pull', 'Remo invertido', 'Dominadas supinas',
+    'Jalon agarre estrecho', 'Remo pecho apoyado', 'Remo Gironda', 'Pullover mancuerna', 'Rack pull',
+    'Buenos dias ligeros',
+  ],
+  hombro: [
+    'Press militar', 'Press arnold', 'Elevaciones laterales', 'Elevaciones frontales', 'Pajaros',
+    'Remo al menton', 'Press en maquina', 'Landmine press', 'Y-raises', 'L-fly',
+    'Elevacion lateral en polea', 'Face pull alto', 'Press sentado mancuernas', 'Press cubano',
+    'Carrera del granjero', 'Shrug dinamico',
+  ],
+  pierna: [
+    'Sentadilla libre', 'Sentadilla frontal', 'Prensa inclinada', 'Zancadas', 'Peso muerto rumano',
+    'Curl femoral', 'Extension de cuadriceps', 'Hip thrust', 'Sentadilla bulgara', 'Hack squat',
+    'Step ups', 'Buenos dias', 'Sissy squat asistida', 'Peso muerto sumo', 'Gemelos de pie',
+    'Gemelos sentado',
+  ],
+  biceps: [
+    'Curl barra recta', 'Curl barra Z', 'Curl martillo', 'Curl concentrado', 'Curl inclinado',
+    'Curl predicador', 'Curl cable bajo', 'Curl spider', 'Curl alterno', 'Curl 21s',
+    'Curl isometrico', 'Curl supino polea', 'Curl cruzado', 'Zottman curl', 'Reverse curl',
+  ],
+  triceps: [
+    'Press frances', 'Extension polea alta', 'Fondos banco', 'Extension por encima de cabeza', 'Patada triceps',
+    'Press cerrado', 'Skull crusher', 'Copa mancuerna', 'Triceps cuerda', 'Triceps barra V',
+    'JM press', 'Extension unilateral cable', 'Fondos asistidos', 'Pushdown invertido', 'Diamond push up',
+  ],
+  gluteo: [
+    'Hip thrust', 'Puente gluteo', 'Patada de gluteo polea', 'Peso muerto sumo', 'Abduccion maquina',
+    'Abduccion banda', 'Sentadilla sumo', 'Zancada atras', 'Step up alto', 'Frog pumps',
+    'Pull through cable', 'Buenos dias', 'Lateral walk banda', 'Hip thrust unilateral', 'Bulgarian split squat',
+  ],
+  core: [
+    'Plancha frontal', 'Plancha lateral', 'Dead bug', 'Bird dog', 'Rueda abdominal',
+    'Crunch cable', 'Elevacion piernas', 'Pallof press', 'Hollow hold', 'V-ups',
+    'Mountain climbers', 'Sit up', 'Russian twist', 'Farmer carry unilateral', 'Woodchopper',
+  ],
 }
 
 export const DAILY_TIPS = [
