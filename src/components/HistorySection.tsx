@@ -74,6 +74,7 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
                 <thead>
                   <tr>
                     <th>Fecha</th>
+                    <th>Ejercicio</th>
                     <th>Peso (kg)</th>
                     <th>RPE</th>
                   </tr>
@@ -85,6 +86,7 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
                     .map((item, idx) => (
                       <tr key={`${item.date}-${idx}`}>
                         <td data-label="Fecha">{new Date(item.date).toLocaleString()}</td>
+                        <td data-label="Ejercicio">{item.exercise || 'General'}</td>
                         <td data-label="Peso (kg)">{item.weight}</td>
                         <td data-label="RPE">{item.rpe ?? '-'}</td>
                       </tr>

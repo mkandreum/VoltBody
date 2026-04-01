@@ -15,7 +15,7 @@ import {
 import { useAppState, useToast, useModal } from '@/hooks'
 import { DAY_NAMES, EXERCISE_CATALOG, EXERCISE_GUIDES, THEMES } from '@/constants'
 import { Exercise, HistoricalWorkout, WorkoutCatalogSelection } from '@/types'
-import { appStateAPI, authAPI, clearAuthToken, communityAPI, setAuthToken } from '@/api/client'
+import { appStateAPI, authAPI, clearAuthToken, communityAPI, setAuthToken, workoutAPI } from '@/api/client'
 
 const STORAGE_KEY = 'fitnessLiquidData'
 const CLOUD_EMAIL_KEY = 'voltbody_cloud_email'
@@ -270,8 +270,9 @@ function App() {
       [string, { weight: string; rpe: string }]
     >)
       .filter(([key, values]) => key.startsWith(dayPrefix) && Number(values.weight) > 0)
-      .map(([, values]) => ({
+      .map(([key, values]) => ({
         date: now,
+        exercise: key.slice(dayPrefix.length),
         weight: Number(values.weight),
         rpe: values.rpe ? Number(values.rpe) : null,
       }))
@@ -282,6 +283,15 @@ function App() {
     }
 
     state.addWorkoutHistory(state.currentDay, entries)
+
+    Promise.all(
+      entries.map(entry =>
+        workoutAPI.saveProgress(state.currentDay, entry.exercise || 'general', entry.weight, entry.rpe || undefined)
+      )
+    ).catch(() => {
+      // Se conserva experiencia offline-first y sincronizacion posterior.
+    })
+
     showToast(`Progreso guardado: ${entries.length} registros ✅`)
   }
 
@@ -337,7 +347,6 @@ function App() {
         settings: { theme: state.theme, language: 'es' },
         metrics: state.historicalData.bodyMetrics,
         workoutsByDay: state.historicalData.byDay,
-        communityMessages: state.communityMessages,
       })
       showToast('Datos subidos a la nube ✅')
     } catch {

@@ -152,7 +152,7 @@ export const TipsSection: React.FC<TipsSectionProps> = ({
 
       <div className="glass card">
         <h3>Comunicacion entre usuarios</h3>
-        <p className="section-caption">La composicion del mensaje ahora queda arriba y el muro abajo para evitar desplazamientos torpes en movil.</p>
+        <p className="section-caption">El muro ahora es global. Puedes publicar para todos y borrar solo tus propios mensajes.</p>
         <div className="metrics-form">
           <input
             type="text"
@@ -174,7 +174,7 @@ export const TipsSection: React.FC<TipsSectionProps> = ({
             Publicar
           </button>
           <button type="button" className="tool-btn delete-btn btn-shine" onClick={onClearCommunityMessages}>
-            Limpiar muro
+            Borrar mis mensajes
           </button>
         </div>
 

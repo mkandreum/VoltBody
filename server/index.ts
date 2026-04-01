@@ -191,6 +191,19 @@ const getWorkoutsByDay = async (userId: string) => {
   )
 }
 
+const ensureLegacyCompatibility = async () => {
+  await prisma.$executeRawUnsafe(`
+    ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "id" TEXT;
+    ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "goalDirection" TEXT NOT NULL DEFAULT 'mantener';
+    ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "theme" TEXT DEFAULT 'theme-aquamarine';
+    ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "specialDish" JSONB;
+    UPDATE "UserProfile"
+    SET "id" = "userId"
+    WHERE "id" IS NULL OR "id" = '';
+    CREATE UNIQUE INDEX IF NOT EXISTS "UserProfile_id_key" ON "UserProfile"("id");
+  `)
+}
+
 app.use(cors())
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ limit: '10mb', extended: true }))
@@ -472,9 +485,7 @@ app.post('/api/workouts/:day/:exercise', requireAuth, async (req, res) => {
 })
 
 app.get('/api/community/messages', requireAuth, async (req, res) => {
-  const typedReq = req as AuthenticatedRequest
   const messages = await prisma.communityMessage.findMany({
-    where: { userId: typedReq.userId },
     orderBy: { createdAt: 'desc' },
     take: 100,
   })
@@ -517,7 +528,7 @@ app.get('/api/app-state', requireAuth, async (req, res) => {
     prisma.userProfile.findUnique({ where: { userId: typedReq.userId } }),
     prisma.bodyMetric.findMany({ where: { userId: typedReq.userId }, orderBy: { date: 'asc' } }),
     getWorkoutsByDay(typedReq.userId),
-    prisma.communityMessage.findMany({ where: { userId: typedReq.userId }, orderBy: { createdAt: 'desc' }, take: 100 }),
+    prisma.communityMessage.findMany({ orderBy: { createdAt: 'desc' }, take: 100 }),
   ])
 
   res.json({
@@ -608,22 +619,6 @@ app.put('/api/app-state', requireAuth, async (req, res) => {
       }
     }
 
-    if (payload.communityMessages) {
-      await tx.communityMessage.deleteMany({ where: { userId: typedReq.userId } })
-      if (payload.communityMessages.length > 0) {
-        await tx.communityMessage.createMany({
-          data: payload.communityMessages
-            .filter(message => Boolean(message.text?.trim()))
-            .slice(0, 100)
-            .map(message => ({
-              userId: typedReq.userId,
-              author: (message.author || 'Usuario').trim(),
-              text: (message.text || '').trim(),
-              createdAt: message.createdAt ? new Date(message.createdAt) : new Date(),
-            })),
-        })
-      }
-    }
   })
 
   res.json({ ok: true })
@@ -649,6 +644,7 @@ app.use((_req, res) => {
 const bootstrap = async () => {
   ensureUploadsDir()
   await prisma.$executeRaw`SELECT 1`
+  await ensureLegacyCompatibility()
 
   app.listen(PORT, () => {
     console.log(`VoltBody API escuchando en puerto ${PORT}`)

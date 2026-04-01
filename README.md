@@ -72,6 +72,13 @@ Se agrego una migracion SQL en `prisma/migrations/20260401_relational_core/migra
 
 Con esto, el login deja de fallar por columnas ausentes al consultar `UserProfile`.
 
+Ademas, se añadió una reparacion adicional para bases antiguas en:
+
+- `prisma/migrations/20260401_legacy_userprofile_compat/migration.sql`
+- arranque defensivo del servidor en `server/index.ts`
+
+Esto cubre despliegues donde la base ya estaba inicializada con un esquema previo y Prisma reportaba `No pending migrations` aunque faltaban columnas legacy como `goalDirection`, `id`, `theme` o `specialDish`.
+
 ## Variables de entorno
 
 Ver `.env.example`.

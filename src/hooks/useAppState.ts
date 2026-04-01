@@ -8,7 +8,7 @@ import {
   WorkoutCatalogSelection,
   SpecialDish,
 } from '@/types'
-import { DIET_DATA } from '@/constants/dietData'
+import { buildDayMeals } from '@/utils/dayMeals'
 
 const getTodaySpanish = (): string => {
   const days = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado']
@@ -289,7 +289,7 @@ export const useAppState = () => {
   }, [])
 
   const getDailyProgress = useCallback((day: string): number => {
-    const dayMeals = DIET_DATA[day] || []
+    const dayMeals = buildDayMeals(day, state.specialDish)
     if (dayMeals.length === 0) return 0
     let checked = 0
     for (let i = 0; i < dayMeals.length; i++) {
@@ -298,7 +298,7 @@ export const useAppState = () => {
       }
     }
     return Math.round((checked / dayMeals.length) * 100)
-  }, [mealCheckVersion])
+  }, [mealCheckVersion, state.specialDish])
 
   return {
     ...state,

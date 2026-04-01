@@ -38,6 +38,7 @@ export interface WorkoutDay {
 export interface HistoricalWorkout {
   date: string
   weight: number
+  exercise?: string
   rpe?: number | null
 }
 

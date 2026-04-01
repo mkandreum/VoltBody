@@ -57,10 +57,7 @@ export const workoutAPI = {
 export const metricsAPI = {
   getAll: () => apiClient.get('/metrics'),
   save: (metric: any) => apiClient.post('/metrics', metric),
-  uploadPhoto: (formData: FormData) =>
-    apiClient.post('/metrics/photo', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
+  uploadPhoto: (photoBase64: string) => apiClient.post('/metrics/photo', { photoBase64 }),
 }
 
 export const settingsAPI = {
