@@ -5,6 +5,7 @@ RUN npm ci
 
 FROM base AS build
 COPY . .
+RUN npx prisma generate
 RUN npm run build:all
 
 FROM node:20-alpine AS runtime
@@ -21,6 +22,10 @@ COPY --from=build /app/server/dist ./server/dist
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh
+
+# Generar Prisma client con schema correcto
+RUN npx prisma generate
+
 RUN mkdir -p /app/uploads
 EXPOSE 3000
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["sh", "/app/docker-entrypoint.sh"]

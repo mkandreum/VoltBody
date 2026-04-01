@@ -2,14 +2,11 @@ version: '3.9'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: voltbody-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: voltbody
       POSTGRES_USER: voltbody
       POSTGRES_PASSWORD: voltbody123
-    ports:
-      - "5432:5432"
     volumes:
       - voltbody-pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -22,13 +19,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: voltbody-app
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -36,6 +32,12 @@ services:
       SESSION_DAYS: 30
     volumes:
       - voltbody-uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   voltbody-pgdata:
