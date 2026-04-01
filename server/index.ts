@@ -18,7 +18,11 @@ const SESSION_DAYS = Number(process.env.SESSION_DAYS || 30)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const uploadsDir = path.join(__dirname, '../uploads')
-const frontendDistDir = path.join(__dirname, '../../dist')
+
+// Buscar frontend build en /app/dist (Vite output) o /app/public (alias de compatibilidad)
+const frontendDistDir = fs.existsSync(path.join(__dirname, '../../dist'))
+  ? path.join(__dirname, '../../dist')
+  : path.join(__dirname, '../../public')
 
 type AuthenticatedRequest = express.Request & { userId: string; token: string }
 
@@ -192,16 +196,18 @@ const getWorkoutsByDay = async (userId: string) => {
 }
 
 const ensureLegacyCompatibility = async () => {
-  await prisma.$executeRawUnsafe(`
-    ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "id" TEXT;
-    ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "goalDirection" TEXT NOT NULL DEFAULT 'mantener';
-    ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "theme" TEXT DEFAULT 'theme-aquamarine';
-    ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "specialDish" JSONB;
-    UPDATE "UserProfile"
-    SET "id" = "userId"
-    WHERE "id" IS NULL OR "id" = '';
-    CREATE UNIQUE INDEX IF NOT EXISTS "UserProfile_id_key" ON "UserProfile"("id");
-  `)
+  console.log('[compat] Verificando columnas legacy en UserProfile...')
+  try {
+    await prisma.$executeRawUnsafe(`ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "id" TEXT`)
+    await prisma.$executeRawUnsafe(`ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "goalDirection" TEXT NOT NULL DEFAULT 'mantener'`)
+    await prisma.$executeRawUnsafe(`ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "theme" TEXT DEFAULT 'theme-aquamarine'`)
+    await prisma.$executeRawUnsafe(`ALTER TABLE IF EXISTS "UserProfile" ADD COLUMN IF NOT EXISTS "specialDish" JSONB`)
+    await prisma.$executeRawUnsafe(`UPDATE "UserProfile" SET "id" = "userId" WHERE "id" IS NULL OR "id" = ''`)
+    await prisma.$executeRawUnsafe(`CREATE UNIQUE INDEX IF NOT EXISTS "UserProfile_id_key" ON "UserProfile"("id")`)
+    console.log('[compat] Columnas legacy verificadas OK')
+  } catch (err) {
+    console.error('[compat] Error verificando columnas legacy:', err)
+  }
 }
 
 app.use(cors())
@@ -643,7 +649,9 @@ app.use((_req, res) => {
 
 const bootstrap = async () => {
   ensureUploadsDir()
+  console.log(`[boot] Frontend dist: ${frontendDistDir} (exists: ${fs.existsSync(frontendDistDir)})`)
   await prisma.$executeRaw`SELECT 1`
+  console.log('[boot] Conexion a DB OK')
   await ensureLegacyCompatibility()
 
   app.listen(PORT, () => {
