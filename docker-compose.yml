@@ -1,20 +1,42 @@
 version: '3.9'
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: voltbody-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: voltbody
+      POSTGRES_USER: voltbody
+      POSTGRES_PASSWORD: voltbody123
+    ports:
+      - "5432:5432"
+    volumes:
+      - voltbody-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voltbody -d voltbody"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   voltbody:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: voltbody-app
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: production
       PORT: 3000
+      DATABASE_URL: postgresql://voltbody:voltbody123@postgres:5432/voltbody?schema=public
+      SESSION_DAYS: 30
     volumes:
-      - voltbody-data:/app/server/data
       - voltbody-uploads:/app/uploads
 
 volumes:
-  voltbody-data:
+  voltbody-pgdata:
   voltbody-uploads:

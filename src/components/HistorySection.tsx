@@ -23,7 +23,7 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
 
   return (
     <div>
-      <div style={{ marginBottom: '20px' }}>
+      <div className="section-block-gap">
         <div className="day-selector-wrapper">
           <div className="day-selector">
             {Object.keys(WORKOUT_DATA).map(day => (
@@ -66,9 +66,9 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
                     .reverse()
                     .map((item, idx) => (
                       <tr key={`${item.date}-${idx}`}>
-                        <td>{new Date(item.date).toLocaleString()}</td>
-                        <td>{item.weight}</td>
-                        <td>{item.rpe ?? '-'}</td>
+                        <td data-label="Fecha">{new Date(item.date).toLocaleString()}</td>
+                        <td data-label="Peso (kg)">{item.weight}</td>
+                        <td data-label="RPE">{item.rpe ?? '-'}</td>
                       </tr>
                     ))}
                 </tbody>

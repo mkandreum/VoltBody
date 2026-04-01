@@ -248,12 +248,12 @@ function App() {
   const handleShowExerciseGuide = (exerciseName: string) => {
     const gifUrl = EXERCISE_GUIDES[exerciseName] || ''
     showModal(
-      <div>
+      <div className="modal-stack">
         <h3>{exerciseName} - Guia Tecnica</h3>
         {gifUrl ? (
-          <img src={gifUrl} style={{ width: '100%', maxHeight: 400, objectFit: 'contain' }} alt={exerciseName} />
+          <img src={gifUrl} className="modal-media" alt={exerciseName} />
         ) : (
-          <p style={{ textAlign: 'center' }}>
+          <p className="modal-empty-copy">
             No hay GIF cargado para este ejercicio. Puedes usar la descripcion tecnica del entrenador.
           </p>
         )}
@@ -341,14 +341,16 @@ function App() {
 
   const handleShowSettings = () => {
     showModal(
-      <div>
+      <div className="modal-stack">
         <h3>Ajustes</h3>
         <div className="user-pill">
           <strong>{currentUser.name}</strong>
           <span>{currentUser.email}</span>
         </div>
 
-        <div className="theme-buttons-grid" style={{ marginBottom: 14, marginTop: 14 }}>
+        <div className="settings-block">
+          <p className="section-caption">Tema visual</p>
+          <div className="theme-buttons-grid">
           {Object.entries(THEMES).map(([value, label]) => (
             <button
               key={value}
@@ -360,25 +362,28 @@ function App() {
             </button>
           ))}
         </div>
+        </div>
 
-        <button type="button" className="tool-btn btn-shine" onClick={() => document.getElementById('restore-input')?.click()}>
-          Importar datos
-        </button>
-        <button type="button" className="tool-btn btn-shine" onClick={handleExportData}>
-          Exportar datos
-        </button>
-        <button type="button" className="tool-btn btn-shine" onClick={handleCloudPush}>
-          Subir a nube
-        </button>
-        <button type="button" className="tool-btn btn-shine" onClick={handleCloudPull}>
-          Descargar de nube
-        </button>
-        <button type="button" className="tool-btn delete-btn btn-shine" onClick={() => { state.deleteAllData(); closeModal() }}>
-          Borrar todo
-        </button>
-        <button type="button" className="tool-btn delete-btn btn-shine" onClick={handleLogout}>
-          Cerrar sesion
-        </button>
+        <div className="settings-actions-grid">
+          <button type="button" className="tool-btn btn-shine" onClick={() => document.getElementById('restore-input')?.click()}>
+            Importar datos
+          </button>
+          <button type="button" className="tool-btn btn-shine" onClick={handleExportData}>
+            Exportar datos
+          </button>
+          <button type="button" className="tool-btn btn-shine" onClick={handleCloudPush}>
+            Subir a nube
+          </button>
+          <button type="button" className="tool-btn btn-shine" onClick={handleCloudPull}>
+            Descargar de nube
+          </button>
+          <button type="button" className="tool-btn delete-btn btn-shine" onClick={() => { state.deleteAllData(); closeModal() }}>
+            Borrar todo
+          </button>
+          <button type="button" className="tool-btn delete-btn btn-shine" onClick={handleLogout}>
+            Cerrar sesion
+          </button>
+        </div>
       </div>
     )
   }

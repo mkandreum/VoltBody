@@ -98,6 +98,7 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
 
       <div className="glass card">
         <h3>Perfil Inicial</h3>
+        <p className="section-caption">Ajusta el punto de partida para que dieta y entreno tengan sentido en movil y en seguimiento diario.</p>
         <div className="metrics-form">
           <select
             className="tool-select"
@@ -159,7 +160,7 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
           </select>
         </div>
 
-        <div className="rec-item" style={{ marginBottom: '14px' }}>
+        <div className="rec-item section-space-sm">
           <strong>Dias de entreno:</strong>
           <div className="chip-grid">
             {['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'].map(day => (
@@ -192,15 +193,13 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
         </div>
 
         <textarea
-          className="tool-input"
-          style={{ marginTop: '10px' }}
+          className="tool-input section-space-sm"
           placeholder="Patologias o limitaciones de comida"
           value={profile.foodPathologies}
           onChange={e => onProfileChange({ foodPathologies: e.target.value })}
         />
         <textarea
-          className="tool-input"
-          style={{ marginTop: '10px' }}
+          className="tool-input section-space-sm"
           placeholder="Lesiones/patologias (hernia, dolor lumbar, etc.)"
           value={profile.injuryPathologies}
           onChange={e => onProfileChange({ injuryPathologies: e.target.value })}
@@ -226,7 +225,7 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
           />
         </div>
 
-        <div className="summary-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <div className="summary-grid goals-summary-grid">
           <div className="summary-item">
             <h4>Kg/semana</h4>
             <p>{plan.weeklyDelta}</p>
@@ -245,13 +244,14 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
           </div>
         </div>
 
-        <p style={{ marginTop: '12px', color: 'var(--text-secondary)' }}>
+        <p className="section-caption section-space-sm">
           Macros sugeridos: {plan.macros.protein}g P / {plan.macros.carbs}g C / {plan.macros.fats}g G
         </p>
       </div>
 
       <div className="glass card">
         <h3>Plato Especial Personalizado</h3>
+        <p className="section-caption">Este bloque debe ser rápido de editar en móvil y fácil de escanear al cocinar.</p>
         <div className="metrics-form">
           <input
             type="text"
@@ -302,6 +302,7 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
 
       <div className="glass card">
         <h3>Catalogo de ejercicios (15-20 por grupo)</h3>
+        <p className="section-caption">Abre solo los grupos que realmente priorizas para no saturar la pantalla pequeña.</p>
         {Object.entries(EXERCISE_CATALOG).map(([group, exercises]) => (
           <details key={group} className="tip-category" open={profile.priorities.includes(group)}>
             <summary>{group.toUpperCase()}</summary>

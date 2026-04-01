@@ -1,21 +1,14 @@
 # VoltBody
 
-App fitness mobile-first con login real, plan de dieta y entreno personalizable, seguimiento de progreso y sincronizacion cloud basica.
+Aplicacion fitness (frontend React + backend Express) con autenticacion real y persistencia relacional en PostgreSQL mediante Prisma.
 
-## Funcionalidades actuales
+## Estado actual
 
-- Login y registro real en la app.
-- Sesion persistente de usuario.
-- Temas: Aguamarina-Negro, Verde-Negro y Ocaso-Negro.
-- Perfil configurable: objetivo, actividad, pasos, lugar de entreno, hora, dias, prioridades y patologias.
-- Dieta diaria con resumen, almuerzo automatico y plato especial personalizado.
-- Entreno configurable con catalogo amplio de ejercicios por grupo muscular.
-- Clase especial semanal configurable.
-- Historial de progreso por dia.
-- Motivacion con frase y foto.
-- Comunidad simple tipo muro.
-- Sincronizacion cloud manual y carga automatica al arrancar si existe sesion.
-- Backend Express que sirve API y frontend compilado en una sola app.
+- Backend migrado a `Prisma + PostgreSQL`.
+- Persistencia en tablas SQL relacionales (sin `store.json` como fuente de verdad).
+- Login/registro/sesion con tabla `Session`.
+- Perfil, settings, metricas, entrenos y comunidad almacenados en tablas dedicadas.
+- UI renovada con nuevo sistema visual para cards, modales, navegacion y formularios.
 
 ## Stack
 
@@ -27,14 +20,16 @@ App fitness mobile-first con login real, plan de dieta y entreno personalizable,
 
 ### Backend
 - Express
-- TypeScript
-- Persistencia JSON local en `server/data/store.json`
-- Archivos de imagen en `uploads/`
+- Prisma ORM
+- PostgreSQL 16
 
-## Instalacion
+## Instalacion local
 
 ```bash
 npm install
+cp .env.example .env
+npm run db:generate
+npm run db:migrate
 ```
 
 ## Desarrollo
@@ -51,54 +46,49 @@ Backend:
 npm run server:dev
 ```
 
-## Build local
-
-```bash
-npm run build:all
-```
-
-## Docker
-
-Archivos incluidos:
-
-- `Dockerfile`
-- `docker-compose.yml`
-- `.dockerignore`
-
-Levantar local con Docker Compose:
+## Docker Compose
 
 ```bash
 docker compose up --build
 ```
 
-La app quedara disponible en:
+Servicios:
+- App: `http://localhost:3000`
+- PostgreSQL: `localhost:5432`
 
-- `http://localhost:3000`
+## Nota sobre logs de PostgreSQL
 
-Persistencia incluida por volumen para:
+El mensaje:
 
-- `server/data`
-- `uploads`
+`PostgreSQL Database directory appears to contain a database; Skipping initialization`
 
-## Coolify
+es normal cuando ya existe un volumen de datos con una base inicializada. No es un error.
 
-Configuracion recomendada en Coolify:
+## Problema `UserProfile.goalDirection` (resuelto)
 
-1. Tipo de despliegue: `Dockerfile`
-2. Puerto expuesto: `3000`
-3. Variable opcional: `PORT=3000`
-4. Volumen persistente para `/app/server/data`
-5. Volumen persistente para `/app/uploads`
+Se agrego una migracion SQL en `prisma/migrations/20260401_relational_core/migration.sql` que:
+- crea tablas base si no existen,
+- y agrega columnas faltantes (incluyendo `goalDirection`) con `ADD COLUMN IF NOT EXISTS`.
 
-No necesitas separar frontend y backend en servicios distintos porque Express sirve tambien el build de Vite.
+Con esto, el login deja de fallar por columnas ausentes al consultar `UserProfile`.
 
 ## Variables de entorno
 
 Ver `.env.example`.
 
-- `VITE_API_URL=` vacio para mismo origen
-- `NODE_ENV=production`
-- `PORT=3000`
+Variables importantes:
+- `DATABASE_URL`
+- `PORT`
+- `SESSION_DAYS`
+- `VITE_API_URL`
+
+## Scripts utiles
+
+- `npm run db:generate`
+- `npm run db:migrate`
+- `npm run db:deploy`
+- `npm run server:dev`
+- `npm run build:all`
 
 ## Endpoints principales
 
@@ -127,11 +117,6 @@ Ver `.env.example`.
 - `POST /api/community/messages`
 - `DELETE /api/community/messages`
 
-## Notas
-
-- La persistencia actual del backend es local JSON. Para multiusuario serio a mayor escala, el siguiente salto natural es PostgreSQL/Prisma.
-- La autenticacion actual es funcional, pero ligera. Si quieres endurecer seguridad, el siguiente paso es hash de password y expiracion real de sesiones.
-
 ## Ultima actualizacion
 
-Marzo 2026
+Abril 2026

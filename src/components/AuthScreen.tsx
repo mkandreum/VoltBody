@@ -36,6 +36,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ loading, onLogin, onRegi
         <p className="auth-copy">
           Guarda tu plan, sincroniza entre dispositivos y usa un perfil real dentro de la app.
         </p>
+        <div className="auth-feature-strip">
+          <span>Rutina diaria</span>
+          <span>Cloud sync</span>
+          <span>Progreso real</span>
+        </div>
 
         <form className="auth-form" onSubmit={submit}>
           {mode === 'register' && (

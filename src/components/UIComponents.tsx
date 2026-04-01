@@ -35,6 +35,10 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onSettingsClick, onLightningClick, dailyProgress }) => {
   return (
     <header className="glass header">
+      <div className="header-meta-row">
+        <span className="header-badge">Modo movil optimizado</span>
+        <span className="header-badge header-badge-muted">{dailyProgress}% completado</span>
+      </div>
       <h1>
         <span className="header-icon clickable-icon" onClick={onSettingsClick} title="Abrir Ajustes">
           ⚙️
@@ -89,7 +93,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentTab, onTabChange 
             type="button"
           >
             <span className="icon">{tab.icon}</span>
-            <span>{tab.label}</span>
+            <span className="nav-label">{tab.label}</span>
           </button>
         ))}
       </nav>

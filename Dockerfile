@@ -11,9 +11,10 @@ FROM node:20-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci --include=dev
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/server/dist ./server/dist
-RUN mkdir -p /app/server/data /app/uploads
+COPY --from=build /app/prisma ./prisma
+RUN mkdir -p /app/uploads
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]

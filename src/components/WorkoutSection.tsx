@@ -41,9 +41,10 @@ export const WorkoutSection: React.FC<WorkoutSectionProps> = ({
         <div className="workout-type">{workout.type}</div>
         <div className="workout-time">{workout.duration}</div>
       </div>
+      <p className="section-caption">Pulsa cada ejercicio para ver su guia tecnica y registra pesos al final.</p>
 
       {specialClass && currentDay === 'jueves' && (
-        <div className="rec-item" style={{ marginBottom: '16px', borderLeftColor: 'var(--neon-yellow)' }}>
+        <div className="rec-item highlight-card highlight-card-warm section-space-sm">
           <strong>Clase Especial:</strong> {specialClass.split('_').join(' ')}
         </div>
       )}
@@ -98,7 +99,7 @@ export const WorkoutSection: React.FC<WorkoutSectionProps> = ({
       </div>
 
       {workout.core && (
-        <div className="rec-item" style={{ marginTop: '20px', borderLeftColor: 'var(--neon-pink)' }}>
+        <div className="rec-item highlight-card highlight-card-cool section-space-md">
           <strong>🎯 Core:</strong> {workout.core}
         </div>
       )}

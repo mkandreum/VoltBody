@@ -76,6 +76,7 @@ export const DietSection: React.FC<DietSectionProps> = ({ currentDay, specialDis
     <div>
       <div className="glass card summary-card">
         <h3 className="summary-title">Resumen del Día: {DAY_NAMES[currentDay]}</h3>
+        <p className="section-caption">Distribucion nutricional prevista para hoy.</p>
         <div className="summary-grid">
           <div className="summary-item">
             <h4>⚡ Calorías</h4>
@@ -106,7 +107,7 @@ export const DietSection: React.FC<DietSectionProps> = ({ currentDay, specialDis
         return (
           <div key={index} className={`glass card meal-card ${isCompleted}`} id={`meal-card-${index}`}>
             <div className="card-header">
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div className="inline-check-row">
                 <input
                   type="checkbox"
                   className="meal-check"

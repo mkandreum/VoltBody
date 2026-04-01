@@ -113,7 +113,7 @@ export const TipsSection: React.FC<TipsSectionProps> = ({
           onChange={e => setLocalPhrase(e.target.value)}
           placeholder="Escribe tu frase"
         />
-        <div className="confirmation-buttons" style={{ marginTop: '10px' }}>
+        <div className="confirmation-buttons section-space-sm">
           <button className="tool-btn btn-shine" type="button" onClick={randomPhrase}>
             Frase aleatoria
           </button>
@@ -126,10 +126,10 @@ export const TipsSection: React.FC<TipsSectionProps> = ({
           className="tool-input"
           accept="image/*"
           onChange={onPhotoFile}
-          style={{ marginTop: '10px' }}
+          
         />
         {localPhoto && (
-          <div className="photo-gallery" style={{ gridTemplateColumns: '1fr', marginTop: '14px' }}>
+          <div className="photo-gallery media-preview section-space-sm">
             <img src={localPhoto} alt="Motivacion" />
           </div>
         )}
@@ -137,11 +137,13 @@ export const TipsSection: React.FC<TipsSectionProps> = ({
 
       <div className="glass card">
         <h3>Generador IA realista (reglas de perfil)</h3>
+        <div className="plan-lines">
         {aiPlan.map((line, index) => (
-          <p key={index} style={{ marginBottom: '8px', color: 'var(--text-secondary)' }}>
+          <p key={index} className="plan-line">
             {line}
           </p>
         ))}
+        </div>
       </div>
 
       <div className="glass card">
@@ -171,19 +173,21 @@ export const TipsSection: React.FC<TipsSectionProps> = ({
           </button>
         </div>
 
-        <div className="history-table-container" style={{ marginTop: '14px' }}>
+        <div className="history-table-container section-space-sm">
           {communityMessages.length === 0 && (
-            <p style={{ color: 'var(--text-secondary)' }}>Aun no hay mensajes en el muro.</p>
+            <p className="section-caption">Aun no hay mensajes en el muro.</p>
           )}
+          <div className="message-feed">
           {communityMessages.map(item => (
-            <div key={item.id} className="rec-item" style={{ marginLeft: 0 }}>
+            <div key={item.id} className="rec-item message-card">
               <strong>{item.author}</strong>
               <p>{item.text}</p>
-              <small style={{ color: 'var(--text-secondary)' }}>
+              <small className="message-meta">
                 {new Date(item.createdAt).toLocaleString()}
               </small>
             </div>
           ))}
+          </div>
         </div>
       </div>
     </div>

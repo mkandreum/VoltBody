@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String             @id @default(uuid())
+  email           String             @unique
+  name            String
+  passwordHash    String
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  sessions        Session[]
+  settings        UserSettings?
+  profile         UserProfile?
+  metrics         BodyMetric[]
+  workoutEntries  WorkoutEntry[]
+  communityPosts  CommunityMessage[]
+
+  @@map("User")
+}
+
+model Session {
+  token      String   @id
+  userId     String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("Session")
+}
+
+model UserSettings {
+  userId     String   @id
+  theme      String   @default("theme-aquamarine")
+  language   String   @default("es")
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("UserSettings")
+}
+
+model UserProfile {
+  userId                 String   @id
+  age                    Int?
+  weight                 Float?
+  height                 Float?
+  gender                 String?
+  goal                   String?
+  goalDirection          String   @default("mantener")
+  goalTargetKg           Float?
+  goalTimelineMonths     Int?
+  currentState           String?
+  schedule               String?
+  trainingDaysPerWeek    Int?
+  sessionMinutes         Int?
+  workHours              Int?
+  motivationPhrase       String?
+  motivationPhoto        String?
+  mealTimes              String?
+  foodPreferences        String?
+  weeklySpecialSession   String?
+  specialDishName        String?
+  specialDishCalories    Int?
+  specialDishProteins    Int?
+  specialDishCarbs       Int?
+  specialDishFats        Int?
+  specialDishPrep        String?
+  avatarConfig           String?
+  routine                String?
+  diet                   String?
+  insights               String?
+  profilePhoto           String?
+  fitnessGoal            String   @default("recomposicion")
+  activityLevel          String   @default("moderado")
+  dailySteps             Int      @default(7000)
+  trainingPlace          String   @default("gym")
+  trainTime              String   @default("19:00")
+  trainDaysCsv           String   @default("lunes,martes,miercoles,viernes,sabado")
+  prioritiesCsv          String   @default("pierna,espalda")
+  foodPathologies        String   @default("")
+  injuryPathologies      String   @default("")
+  specialClass           String   @default("zumba_instructor_jean")
+  targetKg               Int      @default(4)
+  targetMonths           Int      @default(4)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("UserProfile")
+}
+
+model BodyMetric {
+  id         String   @id @default(uuid())
+  userId     String
+  date       DateTime
+  weight     Float?
+  waist      Float?
+  chest      Float?
+  arm        Float?
+  photo      String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+  @@map("BodyMetric")
+}
+
+model WorkoutEntry {
+  id         String   @id @default(uuid())
+  userId     String
+  day        String
+  exercise   String
+  date       DateTime
+  weight     Float
+  rpe        Int?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, day, date])
+  @@map("WorkoutEntry")
+}
+
+model CommunityMessage {
+  id         String   @id @default(uuid())
+  userId     String
+  author     String
+  text       String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("CommunityMessage")
+}
