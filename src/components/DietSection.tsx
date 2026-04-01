@@ -71,12 +71,22 @@ export const DietSection: React.FC<DietSectionProps> = ({ currentDay, specialDis
   const totalProtein = dayMeals.reduce((sum, meal) => sum + meal.macros.p, 0)
   const totalCarbs = dayMeals.reduce((sum, meal) => sum + meal.macros.c, 0)
   const totalFats = dayMeals.reduce((sum, meal) => sum + meal.macros.f, 0)
+  const completedMeals = dayMeals.reduce((sum, _meal, index) => {
+    const mealId = `${currentDay}-meal-${index}`
+    return sum + (isMealChecked(mealId) ? 1 : 0)
+  }, 0)
 
   return (
     <div>
       <div className="glass card summary-card">
         <h3 className="summary-title">Resumen del Día: {DAY_NAMES[currentDay]}</h3>
         <p className="section-caption">Distribucion nutricional prevista para hoy.</p>
+        <div className="summary-banner">
+          <span>Comidas completadas</span>
+          <strong>
+            {completedMeals}/{dayMeals.length}
+          </strong>
+        </div>
         <div className="summary-grid">
           <div className="summary-item">
             <h4>⚡ Calorías</h4>
@@ -106,6 +116,9 @@ export const DietSection: React.FC<DietSectionProps> = ({ currentDay, specialDis
 
         return (
           <div key={index} className={`glass card meal-card ${isCompleted}`} id={`meal-card-${index}`}>
+            <div className="card-topline">
+              <span className="card-sequence-badge">Bloque {index + 1}</span>
+            </div>
             <div className="card-header">
               <div className="inline-check-row">
                 <input

@@ -25,6 +25,7 @@ export const WorkoutSection: React.FC<WorkoutSectionProps> = ({
   const workout = WORKOUT_DATA[currentDay]
   if (!workout) return null
   const exercisesToShow = customExercises && customExercises.length > 0 ? customExercises : workout.exercises
+  const totalSets = exercisesToShow.reduce((sum, exercise) => sum + (exercise.sets || 0), 0)
 
   const calculate1RM = (weight: string, reps: string): string => {
     const w = parseFloat(weight)
@@ -42,6 +43,20 @@ export const WorkoutSection: React.FC<WorkoutSectionProps> = ({
         <div className="workout-time">{workout.duration}</div>
       </div>
       <p className="section-caption">Pulsa cada ejercicio para ver su guia tecnica y registra pesos al final.</p>
+      <div className="workout-kpi-row">
+        <div className="summary-item">
+          <h4>Ejercicios</h4>
+          <p>{exercisesToShow.length}</p>
+        </div>
+        <div className="summary-item">
+          <h4>Series totales</h4>
+          <p>{totalSets}</p>
+        </div>
+        <div className="summary-item">
+          <h4>Duracion</h4>
+          <p>{workout.duration}</p>
+        </div>
+      </div>
 
       {specialClass && currentDay === 'jueves' && (
         <div className="rec-item highlight-card highlight-card-warm section-space-sm">
@@ -104,7 +119,7 @@ export const WorkoutSection: React.FC<WorkoutSectionProps> = ({
         </div>
       )}
 
-      <button className="workout-save-btn btn-shine" onClick={onSaveProgress}>
+      <button className="workout-save-btn btn-shine workout-save-sticky" onClick={onSaveProgress}>
         💾 Guardar
       </button>
     </div>

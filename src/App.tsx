@@ -13,7 +13,7 @@ import {
   Modal,
 } from '@/components'
 import { useAppState, useToast, useModal } from '@/hooks'
-import { EXERCISE_CATALOG, EXERCISE_GUIDES, THEMES } from '@/constants'
+import { DAY_NAMES, EXERCISE_CATALOG, EXERCISE_GUIDES, THEMES } from '@/constants'
 import { Exercise, HistoricalWorkout, WorkoutCatalogSelection } from '@/types'
 import { appStateAPI, authAPI, clearAuthToken, communityAPI, setAuthToken } from '@/api/client'
 
@@ -67,6 +67,46 @@ function App() {
       reps: state.profile.fitnessGoal === 'perder_grasa' ? '12-15' : '8-12',
     })) as Exercise[]
   }, [state.currentDay, state.selectedExercises, state.profile.fitnessGoal])
+
+  const sectionMeta = useMemo(() => {
+    const currentDayName = DAY_NAMES[state.currentDay] || state.currentDay
+    const progress = state.getDailyProgress(state.currentDay)
+
+    const config = {
+      diet: {
+        kicker: 'Nutricion guiada',
+        title: `Comidas para ${currentDayName}`,
+        description: 'Sigue el bloque del dia sin perderte entre tarjetas. Primero mira el resumen, luego marca cada comida.',
+        hint: `${progress}% del plan diario ya esta completado.`,
+      },
+      workout: {
+        kicker: 'Sesion activa',
+        title: `Entreno de ${currentDayName}`,
+        description: 'La pantalla prioriza ejercicios, carga y registro. El foco debe estar en ejecutar y guardar sin ruido.',
+        hint: `Objetivo recomendado: ${state.profile.fitnessGoal.replace('_', ' ')}`,
+      },
+      history: {
+        kicker: 'Lectura rapida',
+        title: 'Progreso legible en movil',
+        description: 'Los registros se muestran en formato fácil de escanear para revisar avances sin pelearte con tablas anchas.',
+        hint: `Dia analizado: ${DAY_NAMES[state.historySelectedDay] || state.historySelectedDay}`,
+      },
+      goals: {
+        kicker: 'Arquitectura del plan',
+        title: 'Configura lo importante primero',
+        description: 'Agrupé el flujo para que prioridad, objetivo y restricciones se entiendan antes de entrar en detalles.',
+        hint: `${state.profile.trainDays.length} dias activos y ${state.profile.priorities.length} prioridades seleccionadas.`,
+      },
+      tips: {
+        kicker: 'Motivacion y comunidad',
+        title: 'Contenido corto, claro y accionable',
+        description: 'La motivacion, el resumen del plan y el muro ahora tienen mejor separación visual para lectura rápida.',
+        hint: `${state.communityMessages.length} mensajes cargados en el muro.`,
+      },
+    }
+
+    return config[state.currentTab as keyof typeof config]
+  }, [state.communityMessages.length, state.currentDay, state.currentTab, state.getDailyProgress, state.historySelectedDay, state.profile.fitnessGoal, state.profile.priorities.length, state.profile.trainDays.length])
 
   const getSerializableState = () => ({
     currentDay: state.currentDay,
@@ -464,7 +504,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="app-shell">
       <div className="liquid-container">
         <div className="blob blob1"></div>
         <div className="blob blob2"></div>
@@ -473,7 +513,7 @@ function App() {
       </div>
       <div id="lightning-overlay"></div>
 
-      <div className="container">
+      <div className="container app-frame">
         <Header
           onSettingsClick={handleShowSettings}
           onLightningClick={handleLightning}
@@ -488,8 +528,26 @@ function App() {
           />
         </div>
 
-        <main>
-          <section className="content-section active">{renderSection()}</section>
+        <section className="glass section-hero">
+          <div className="section-hero-copy">
+            <span className="section-hero-kicker">{sectionMeta.kicker}</span>
+            <h2>{sectionMeta.title}</h2>
+            <p>{sectionMeta.description}</p>
+          </div>
+          <div className="section-hero-side">
+            <div className="section-hero-chip">
+              <span>Usuario</span>
+              <strong>{currentUser.name}</strong>
+            </div>
+            <div className="section-hero-chip section-hero-chip-muted">
+              <span>Contexto</span>
+              <strong>{sectionMeta.hint}</strong>
+            </div>
+          </div>
+        </section>
+
+        <main className="main-surface glass">
+          <section className="content-section active native-content-stack">{renderSection()}</section>
         </main>
       </div>
 

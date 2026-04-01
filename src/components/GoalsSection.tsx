@@ -92,6 +92,12 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
     onSpecialDishChange(dishForm)
   }
 
+  const profileHighlights = [
+    { label: 'Meta', value: profile.fitnessGoal.replace('_', ' ') },
+    { label: 'Actividad', value: profile.activityLevel },
+    { label: 'Entrenos', value: `${profile.trainDays.length} dias` },
+  ]
+
   return (
     <div>
       <h2 className="rec-title">Plan Personalizado y Configuracion</h2>
@@ -99,6 +105,14 @@ export const GoalsSection: React.FC<GoalsSectionProps> = ({
       <div className="glass card">
         <h3>Perfil Inicial</h3>
         <p className="section-caption">Ajusta el punto de partida para que dieta y entreno tengan sentido en movil y en seguimiento diario.</p>
+        <div className="profile-highlight-grid">
+          {profileHighlights.map(item => (
+            <div key={item.label} className="summary-item">
+              <h4>{item.label}</h4>
+              <p>{item.value}</p>
+            </div>
+          ))}
+        </div>
         <div className="metrics-form">
           <select
             className="tool-select"

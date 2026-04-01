@@ -133,6 +133,10 @@ export const TipsSection: React.FC<TipsSectionProps> = ({
             <img src={localPhoto} alt="Motivacion" />
           </div>
         )}
+        <div className="motivation-preview-card section-space-sm">
+          <span>Vista rapida</span>
+          <strong>{localPhrase || 'Sin frase definida'}</strong>
+        </div>
       </div>
 
       <div className="glass card">
@@ -148,6 +152,7 @@ export const TipsSection: React.FC<TipsSectionProps> = ({
 
       <div className="glass card">
         <h3>Comunicacion entre usuarios</h3>
+        <p className="section-caption">La composicion del mensaje ahora queda arriba y el muro abajo para evitar desplazamientos torpes en movil.</p>
         <div className="metrics-form">
           <input
             type="text"

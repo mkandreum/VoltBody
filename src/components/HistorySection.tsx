@@ -20,6 +20,10 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
   const dayHistory = Array.isArray(historicalData.byDay[historySelectedDay])
     ? (historicalData.byDay[historySelectedDay] as HistoricalWorkout[])
     : []
+  const averageRpe =
+    dayHistory.filter(item => typeof item.rpe === 'number').reduce((sum, item) => sum + Number(item.rpe || 0), 0) /
+      Math.max(dayHistory.filter(item => typeof item.rpe === 'number').length, 1)
+  const bestWeight = dayHistory.reduce((max, item) => Math.max(max, item.weight || 0), 0)
 
   return (
     <div>
@@ -51,6 +55,20 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
         {dayHistory.length > 0 && (
           <div className="glass card">
             <h3 className="history-exercise-title">Registros guardados</h3>
+            <div className="history-metrics-row">
+              <div className="summary-item">
+                <h4>Series guardadas</h4>
+                <p>{dayHistory.length}</p>
+              </div>
+              <div className="summary-item">
+                <h4>Mejor peso</h4>
+                <p>{bestWeight} kg</p>
+              </div>
+              <div className="summary-item">
+                <h4>RPE medio</h4>
+                <p>{Number.isFinite(averageRpe) ? averageRpe.toFixed(1) : '-'}</p>
+              </div>
+            </div>
             <div className="history-table-container">
               <table className="history-table">
                 <thead>

@@ -34,28 +34,35 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onSettingsClick, onLightningClick, dailyProgress }) => {
   return (
-    <header className="glass header">
-      <div className="header-meta-row">
-        <span className="header-badge">Modo movil optimizado</span>
-        <span className="header-badge header-badge-muted">{dailyProgress}% completado</span>
-      </div>
-      <h1>
-        <span className="header-icon clickable-icon" onClick={onSettingsClick} title="Abrir Ajustes">
+    <header className="header-shell">
+      <div className="glass top-appbar">
+        <button type="button" className="header-icon clickable-icon header-action-btn" onClick={onSettingsClick} title="Abrir Ajustes">
           ⚙️
-        </span>
-        VoltBody
-        <span
+        </button>
+        <div className="appbar-brand">
+          <span className="appbar-kicker">VoltBody</span>
+          <strong>Fitness Planner</strong>
+        </div>
+        <button
+          type="button"
           id="lightning-icon"
-          className="header-icon clickable-icon"
+          className="header-icon clickable-icon header-action-btn"
           onClick={onLightningClick}
           title="¡Activar Poder!"
         >
           ⚡️
-        </span>
-      </h1>
-      <p>Plan Hipertrofia Personalizado</p>
-      <div className="progress-bar">
-        <div id="dailyProgress" className="progress-fill" style={{ width: `${dailyProgress}%` }}></div>
+        </button>
+      </div>
+      <div className="glass header native-header-card">
+        <div className="header-meta-row">
+          <span className="header-badge">Modo movil optimizado</span>
+          <span className="header-badge header-badge-muted">{dailyProgress}% completado</span>
+        </div>
+        <h1>VoltBody</h1>
+        <p>Plan Hipertrofia Personalizado</p>
+        <div className="progress-bar">
+          <div id="dailyProgress" className="progress-fill" style={{ width: `${dailyProgress}%` }}></div>
+        </div>
       </div>
     </header>
   )
@@ -92,7 +99,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentTab, onTabChange 
             onClick={() => onTabChange(tab.id)}
             type="button"
           >
-            <span className="icon">{tab.icon}</span>
+            <span className="icon nav-icon-bubble">{tab.icon}</span>
             <span className="nav-label">{tab.label}</span>
           </button>
         ))}

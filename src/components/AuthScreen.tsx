@@ -32,6 +32,22 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ loading, onLogin, onRegi
 
       <div className="auth-card glass">
         <p className="auth-kicker">VoltBody</p>
+        <div className="auth-mode-switch" role="tablist" aria-label="Modo de acceso">
+          <button
+            type="button"
+            className={`auth-mode-pill ${mode === 'login' ? 'active' : ''}`}
+            onClick={() => setMode('login')}
+          >
+            Entrar
+          </button>
+          <button
+            type="button"
+            className={`auth-mode-pill ${mode === 'register' ? 'active' : ''}`}
+            onClick={() => setMode('register')}
+          >
+            Crear cuenta
+          </button>
+        </div>
         <h1>{mode === 'login' ? 'Entrar' : 'Crear cuenta'}</h1>
         <p className="auth-copy">
           Guarda tu plan, sincroniza entre dispositivos y usa un perfil real dentro de la app.
@@ -77,6 +93,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ loading, onLogin, onRegi
             {loading ? 'Procesando...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
           </button>
         </form>
+
+        <p className="auth-helper-copy">
+          Acceso pensado para usarlo con una sola mano: campos claros, CTA principal y cambio de modo visible arriba.
+        </p>
 
         <button
           type="button"
