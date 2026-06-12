@@ -1,129 +1,57 @@
-# VoltBody
+<div align="center">
 
-Aplicacion fitness (frontend React + backend Express) con autenticacion real y persistencia relacional en PostgreSQL mediante Prisma.
+# ⚡ VoltBody
 
-## Estado actual
+**Plataforma de gestión para gimnasios y centros deportivos**
 
-- Backend migrado a `Prisma + PostgreSQL`.
-- Persistencia en tablas SQL relacionales (sin `store.json` como fuente de verdad).
-- Login/registro/sesion con tabla `Session`.
-- Perfil, settings, metricas, entrenos y comunidad almacenados en tablas dedicadas.
-- UI renovada con nuevo sistema visual para cards, modales, navegacion y formularios.
+*Un producto de [Xyon Platforms](https://github.com/mkandreum)*
 
-## Stack
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
 
-### Frontend
-- React 18
-- Vite
-- TypeScript
-- Axios
+</div>
 
-### Backend
-- Express
-- Prisma ORM
-- PostgreSQL 16
+---
 
-## Instalacion local
+## ¿Qué es VoltBody?
+
+VoltBody es una plataforma web de gestión para gimnasios y centros deportivos desarrollada por Xyon Platforms. Permite administrar socios, membrecías, accesos y la operativa diaria del centro desde una interfaz moderna y lista para producción.
+
+## ✨ Funcionalidades
+
+- **Gestión de socios** y membrecías
+- **Control de accesos** al centro
+- **Panel de administración** con dashboard de actividad
+- **Gestión de clases y horarios**
+- **Despliegue self-hosted** vía Docker y Coolify
+
+## 🛠️ Stack técnico
+
+| Capa | Tecnología |
+|------|----------|
+| Frontend | React + TypeScript + Vite |
+| Backend | Node.js + TypeScript |
+| Despliegue | Docker + Coolify |
+
+## 🚀 Instalación
+
+```bash
+git clone https://github.com/mkandreum/VoltBody.git
+cd VoltBody
+cp .env.example .env
+docker-compose up -d
+```
+
+### Desarrollo local
 
 ```bash
 npm install
-cp .env.example .env
-npm run db:generate
-npm run db:migrate
-```
-
-## Desarrollo
-
-Frontend:
-
-```bash
 npm run dev
 ```
 
-Backend:
+## 🏢 Xyon Platforms
 
-```bash
-npm run server:dev
-```
+VoltBody es un producto desarrollado y mantenido por **Xyon Platforms**, empresa especializada en soluciones digitales para negocios locales y pymes.
 
-## Docker Compose
-
-```bash
-docker compose up --build
-```
-
-Servicios:
-- App: `http://localhost:3000`
-- PostgreSQL: `localhost:5432`
-
-## Nota sobre logs de PostgreSQL
-
-El mensaje:
-
-`PostgreSQL Database directory appears to contain a database; Skipping initialization`
-
-es normal cuando ya existe un volumen de datos con una base inicializada. No es un error.
-
-## Problema `UserProfile.goalDirection` (resuelto)
-
-Se agrego una migracion SQL en `prisma/migrations/20260401_relational_core/migration.sql` que:
-- crea tablas base si no existen,
-- y agrega columnas faltantes (incluyendo `goalDirection`) con `ADD COLUMN IF NOT EXISTS`.
-
-Con esto, el login deja de fallar por columnas ausentes al consultar `UserProfile`.
-
-Ademas, se añadió una reparacion adicional para bases antiguas en:
-
-- `prisma/migrations/20260401_legacy_userprofile_compat/migration.sql`
-- arranque defensivo del servidor en `server/index.ts`
-
-Esto cubre despliegues donde la base ya estaba inicializada con un esquema previo y Prisma reportaba `No pending migrations` aunque faltaban columnas legacy como `goalDirection`, `id`, `theme` o `specialDish`.
-
-## Variables de entorno
-
-Ver `.env.example`.
-
-Variables importantes:
-- `DATABASE_URL`
-- `PORT`
-- `SESSION_DAYS`
-- `VITE_API_URL`
-
-## Scripts utiles
-
-- `npm run db:generate`
-- `npm run db:migrate`
-- `npm run db:deploy`
-- `npm run server:dev`
-- `npm run build:all`
-
-## Endpoints principales
-
-### Auth
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `POST /api/auth/refresh`
-
-### Estado y perfil
-- `GET /api/settings`
-- `PUT /api/settings`
-- `GET /api/profile`
-- `PUT /api/profile`
-- `GET /api/app-state`
-- `PUT /api/app-state`
-
-### Progreso
-- `GET /api/metrics`
-- `POST /api/metrics`
-- `POST /api/metrics/photo`
-- `GET /api/workouts/:day`
-- `POST /api/workouts/:day/:exercise`
-
-### Comunidad
-- `GET /api/community/messages`
-- `POST /api/community/messages`
-- `DELETE /api/community/messages`
-
-## Ultima actualizacion
-
-Abril 2026
+> © Xyon Platforms — Todos los derechos reservados
